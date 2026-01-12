@@ -1,5 +1,6 @@
 package com.viscovich.backend_store.customers.service;
 
+import com.viscovich.backend_store.common.exception.EmailAlreadyExistsException;
 import com.viscovich.backend_store.customers.model.Customer;
 import com.viscovich.backend_store.customers.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class CustomerService {
 
     public Customer saveCustomer(Customer customer){
         if (repository.existsByEmail(customer.getEmail())) {
-            throw new RuntimeException("El email ya está registrado");
+            throw new EmailAlreadyExistsException(customer.getEmail());
         }
         return repository.save(customer);
     }
