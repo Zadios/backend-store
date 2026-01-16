@@ -4,9 +4,12 @@ import com.viscovich.backend_store.common.exception.ResourceNotFoundException;
 import com.viscovich.backend_store.customers.model.Customer;
 import com.viscovich.backend_store.customers.repository.CustomerRepository;
 import com.viscovich.backend_store.orders.model.Order;
+import com.viscovich.backend_store.products.model.Product;
 import com.viscovich.backend_store.products.repository.OrderRepository;
+import com.viscovich.backend_store.products.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,19 +17,31 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
+    private final ProductRepository productRepository;
 
-    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository){
+    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository){
         this.customerRepository = customerRepository;
         this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
     }
 
-    public Order createOrder(Long customerId, Order order) {
+    public Order createOrder(Long customerId, List<Long> productIds, Order order) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con ID: " + customerId));
 
-        System.out.println("Cliente encontrado: " + customer.getFirstName());
+        List<Product> products = productRepository.findAllById(productIds);
+
+        if(products.isEmpty()){
+            throw new RuntimeException("Una órden debe contener al menos un producto válido.");
+        }
+
+        BigDecimal total = products.stream()
+                .map(Product::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         order.setCustomer(customer);
+        order.setProducts(products);
+        order.setTotal(total);
         order.setDate(LocalDateTime.now());
         return orderRepository.save(order);
     }

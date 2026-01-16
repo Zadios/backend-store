@@ -23,8 +23,11 @@ public class OrderController {
     }
 
     @PostMapping("/customer/{customerId}")
-    public ResponseEntity<Order> create(@PathVariable Long customerId, @RequestBody Order order) {
-        Order newOrder = service.createOrder(customerId, order);
+    public ResponseEntity<Order> create(@PathVariable Long customerId,
+                                        @RequestParam List<Long> productIds,
+                                        @RequestBody Order order) {
+
+        Order newOrder = service.createOrder(customerId, productIds, order);
         return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
     }
 }
