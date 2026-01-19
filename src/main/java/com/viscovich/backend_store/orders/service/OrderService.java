@@ -39,6 +39,16 @@ public class OrderService {
                 .map(Product::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        for (Product product : products) {
+            if(product.getStock() < 1) {
+                throw new RuntimeException("No hay stock suficiente del producto: " + product.getName());
+            }
+        }
+
+        for (Product product : products) {
+            product.setStock(product.getStock() - 1);
+        }
+
         order.setCustomer(customer);
         order.setProducts(products);
         order.setTotal(total);
