@@ -22,6 +22,12 @@ public class OrderController {
         return service.getAllOrders();
     }
 
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<Order>> getByCustomer(@PathVariable Long customerId){
+        List<Order> orders = service.getOrdersByCustomer(customerId);
+        return ResponseEntity.ok(orders);
+    }
+
     @PostMapping("/customer/{customerId}")
     public ResponseEntity<Order> create(@PathVariable Long customerId,
                                         @RequestParam List<Long> productIds,

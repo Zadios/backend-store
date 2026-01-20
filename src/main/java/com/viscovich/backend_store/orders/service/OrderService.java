@@ -5,13 +5,14 @@ import com.viscovich.backend_store.customers.model.Customer;
 import com.viscovich.backend_store.customers.repository.CustomerRepository;
 import com.viscovich.backend_store.orders.model.Order;
 import com.viscovich.backend_store.products.model.Product;
-import com.viscovich.backend_store.products.repository.OrderRepository;
+import com.viscovich.backend_store.orders.repository.OrderRepository;
 import com.viscovich.backend_store.products.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class OrderService {
@@ -54,6 +55,13 @@ public class OrderService {
         order.setTotal(total);
         order.setDate(LocalDateTime.now());
         return orderRepository.save(order);
+    }
+
+    public List<Order> getOrdersByCustomer(Long customerId) {
+        if (!customerRepository.existsById(customerId)) {
+            throw new RuntimeException("No existe un cliente con el ID: " + customerId);
+        }
+        return orderRepository.findByCustomerId(customerId);
     }
 
     public List<Order> getAllOrders() {
