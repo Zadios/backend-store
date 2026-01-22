@@ -23,17 +23,15 @@ public class OrderController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<Order>> getByCustomer(@PathVariable Long customerId){
-        List<Order> orders = service.getOrdersByCustomer(customerId);
-        return ResponseEntity.ok(orders);
+    public List<Order> getByCustomer(@PathVariable Long customerId){
+        return service.getOrdersByCustomer(customerId);
     }
 
     @PostMapping("/customer/{customerId}")
-    public ResponseEntity<Order> create(@PathVariable Long customerId,
-                                        @RequestParam List<Long> productIds,
-                                        @RequestBody Order order) {
-
-        Order newOrder = service.createOrder(customerId, productIds, order);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Order createOrder(@PathVariable Long customerId,
+                             @RequestParam List<Long> productIds,
+                             @RequestBody Order order) {
+        return service.createOrder(customerId, productIds, order);
     }
 }
