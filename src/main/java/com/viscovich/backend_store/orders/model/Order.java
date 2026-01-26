@@ -28,7 +28,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
-    @JsonIgnoreProperties("orders")
+    @JsonIgnoreProperties({"address", "phone", "orders"})
     private Customer customer;
 
     @ManyToMany
@@ -37,5 +37,6 @@ public class Order {
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
+    @JsonIgnoreProperties({"description", "stock"})
     private List<Product> products;
 }
